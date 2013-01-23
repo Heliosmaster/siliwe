@@ -1,0 +1,13 @@
+%title= @title
+- if @weight
+  %p
+    Are you sure you want to delete the following measure:
+    = succeed "?" do
+      %em
+        "#{@weight.value}"
+  %form{:action => "/weights/#{@weight.id}", :method => "post"}
+    %input{:name => "_method", :type => "hidden", :value => "delete"}
+      %input{:type => "submit", :value => "Yes, Delete It!"}
+        %a{:href => "javascript:history.back()"} Cancel
+- else
+  %p Measurement to delete not found.

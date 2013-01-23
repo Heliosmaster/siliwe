@@ -1,0 +1,10 @@
+#home_table{
+	margin-right:auto;
+	margin-left:auto;
+}
+input[type="submit"]{
+	margin-bottom:10px;
+}
+input{
+	background-color:#fff;
+}

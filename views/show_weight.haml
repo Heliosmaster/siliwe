@@ -1,0 +1,4 @@
+%p
+  ="The measure for #{@weight.date.strftime('%d %b %Y')} is #{@weight.value}. Do you wish to"
+  %a{:href => "/weights/#{params[:id]}/edit"} change
+  it?
