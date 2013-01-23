@@ -1,0 +1,5 @@
+siliwe.db
+webrat.log
+.DS_STORE
+*~
+Gemfile.lock
