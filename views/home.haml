@@ -1,18 +1,28 @@
 %link{:href => "http://code.jquery.com/ui/1.10.0/themes/base/jquery-ui.css", :rel => "stylesheet"}/
 %script{:src => "http://code.jquery.com/jquery-1.8.3.js"}
 %script{:src => "http://code.jquery.com/ui/1.10.0/jquery-ui.js"}
+:javascript
+  $(document).ready(function(){
+   $("tr:even").addClass("even");
+   $("tr:odd").addClass("odd");
+  });
 %section#add
   %form{:action => "/", :method => "post"}
     %input{:name => "value", :placeholder => "Weight (e.g. 50)", :type =>"text"}
     %input#datepicker{:name => "date", :placeholder => "Date", :readonly => true, :type => "text", :style=>"background-color:#fff;"}
     %input.btn.btn-primary{:type => "submit", :value => "Post new weight"}
 %table#home_table
-  %tr
-    %th id
-    %th value
-    %th date
-    %th user id
-    %th user
+  %thead
+    %tr
+      %th id
+      %th value
+      %th date
+      %th user id
+      %th user
+      %th
+      %th
+      %th
+  %tbody    
   - @weights.each do |w|
     %tr
       %td= w.id
@@ -20,9 +30,7 @@
       %td= w.date.strftime('%d %b %Y')
       %td= w.user
       %td
-        %b
-          - @user = DmUser.get w.user
-          = @user.email
+        %b=DmUser.get(w.user).email
       %td
         %a{:href => "/weights/#{w.id}"} Show
       %td

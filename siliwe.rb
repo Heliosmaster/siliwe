@@ -36,7 +36,7 @@ end
 
 get '/' do
 	if logged_in?
-		@weights = Weight.all(:user => current_user.id)
+		@weights = Weight.all(:user => current_user.id, :order => [:date.asc])
 		@title = "Your weights"
 		flash[:notice] = "Hi #{current_user.email}!"
 	else

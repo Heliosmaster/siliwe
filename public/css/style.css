@@ -5,6 +5,18 @@
 input[type="submit"]{
 	margin-bottom:10px;
 }
-input{
-	background-color:#fff;
-}
+table {
+   width: 100%;
+   border: 1px solid #cef;
+   margin: 1em 25px;
+   text-align: left; }
+th {
+   font-weight: bold;
+   background-color: #acf;
+   border-bottom: 1px solid #cef; }
+td,th {
+   padding: 4px 5px; }
+.odd {
+   background-color: #def; }
+.odd td {
+   border-bottom: 1px solid #cef; }   
