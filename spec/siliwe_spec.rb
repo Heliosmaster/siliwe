@@ -6,12 +6,14 @@ describe "Siliwe" do
 	before do
 		new_user = DmUser.new
 		new_user.email = "pippo@minni.com"
+		new_user.name  = "pippo"
 		new_user.password = "123"
 		new_user.password_confirmation = "123"
 		new_user.save!
 
 		new_user2 = DmUser.new
 		new_user2.email = "ciccio@papera.com"
+		new_user2.name = "ciccio"
 		new_user2.password = "123"
 		new_user2.password_confirmation = "123"
 		new_user2.save!
@@ -20,6 +22,7 @@ describe "Siliwe" do
 	def log_in
 		get '/login'
 		fill_in "email", :with => "pippo@minni.com"
+		fill_in "name", :with => "pippo"
 		fill_in "password", :with => "123"
 		click_button "Log in"
 		follow_redirect!
@@ -28,6 +31,7 @@ describe "Siliwe" do
 	def log_in2
 		get '/login'
 		fill_in "email", :with => "ciccio@papera.com"
+		fill_in "name", :with => "ciccio"
 		fill_in "password", :with => "123"
 		click_button "Log in"
 		follow_redirect!
@@ -55,6 +59,7 @@ describe "Siliwe" do
 		it 'should signup succesfully' do
 			get '/signup'
 			fill_in "user[email]", :with => "pippo2@minni.com"
+			fill_in "user[name]", :with => "pippo2"
 			fill_in "user[password]", :with => "123"
 			fill_in "user[password_confirmation]", :with => "123"
 			click_button "Sign up"

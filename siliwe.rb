@@ -23,6 +23,11 @@ class Weight
   validates_within :date, :set => (Date.new(1900,1,1)..Date.today)
 end
 
+
+class DmUser
+  property :name, String, :required => true, :unique => true
+end
+
 DataMapper.finalize.auto_upgrade!
 
 def check_permission
@@ -38,7 +43,7 @@ get '/' do
 	if logged_in?
 		@weights = Weight.all(:user => current_user.id, :order => [:date.asc])
 		@title = "Your weights"
-		flash[:notice] = "Hi #{current_user.email}!"
+		flash[:notice] = "Hi #{current_user.name}!"
 	else
 		@weights = Weight.all
 		@title = "All weights"

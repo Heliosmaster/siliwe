@@ -18,7 +18,8 @@
       %th value
       %th date
       %th user id
-      %th user
+      %th username
+      %th email
       %th
       %th
       %th
@@ -29,6 +30,8 @@
       %td= w.value
       %td= w.date.strftime('%d %b %Y')
       %td= w.user
+      %td
+        %b=DmUser.get(w.user).name
       %td
         %b=DmUser.get(w.user).email
       %td

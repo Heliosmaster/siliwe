@@ -3,6 +3,10 @@
 %form{:action => "/login", :method => "post"}
   .field
     .label
+      %label{:for => "user_name'"} Name
+    %input{:id => "user_name", :name => "name", :size => 30, :type => "text"}
+  .field
+    .label
       %label{:for => "user_email'"} Email
     %input{:id => "user_email", :name => "email", :size => 30, :type => "text"}
   .field

@@ -1,8 +1,7 @@
 !!!
 %html
   %head
-    %title 
-      = @title
+    %title= @title
     %link{:href=>"/css/bootstrap.css", :rel => "stylesheet", :media => "screen"}
     %link{:href=>"/css/style.css", :rel => "stylesheet", :media => "screen"}
   %body
@@ -18,16 +17,12 @@
           %ul.nav
             %li.active
               %a{:href => "/"} Home
-          / /.nav-collapse
   .container
-    %p{ :style => 'text-align:center;'}
-      = flash[:notice]
+    %p{ :style => 'text-align:center;'}= flash[:notice]
     %p{ :style => 'text-align:right;'}
       - if logged_in?
         logged in as 
-        %a{:href=>"/users/#{current_user.id}"}
-          ="#{current_user.email}"
-
+        %a{:href=>"/users/#{current_user.id}"}="#{current_user.name}."
         %a{:href=>"/logout"} logout
       - else
         %a{:href=>"/login"}Login
