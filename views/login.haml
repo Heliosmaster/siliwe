@@ -3,10 +3,6 @@
 %form{:action => "/login", :method => "post"}
   .field
     .label
-      %label{:for => "user_name'"} Name
-    %input{:id => "user_name", :name => "name", :size => 30, :type => "text"}
-  .field
-    .label
       %label{:for => "user_email'"} Email
     %input{:id => "user_email", :name => "email", :size => 30, :type => "text"}
   .field
@@ -15,5 +11,4 @@
     %input{:id => "user_password", :name => "password", :size => 30, :type => "password"}
   .buttons
     %input{:value => "Log in", :type => "submit"}
-    %a{:href => "/signup", :class => 'sinatra_authentication_link'}
-      Sign up
+    %a{:href => "/signup", :class => 'sinatra_authentication_link'} Sign up

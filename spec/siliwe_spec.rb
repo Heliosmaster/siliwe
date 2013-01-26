@@ -22,7 +22,6 @@ describe "Siliwe" do
 	def log_in
 		get '/login'
 		fill_in "email", :with => "pippo@minni.com"
-		fill_in "name", :with => "pippo"
 		fill_in "password", :with => "123"
 		click_button "Log in"
 		follow_redirect!
@@ -31,7 +30,6 @@ describe "Siliwe" do
 	def log_in2
 		get '/login'
 		fill_in "email", :with => "ciccio@papera.com"
-		fill_in "name", :with => "ciccio"
 		fill_in "password", :with => "123"
 		click_button "Log in"
 		follow_redirect!

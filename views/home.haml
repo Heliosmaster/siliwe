@@ -30,10 +30,8 @@
       %td= w.value
       %td= w.date.strftime('%d %b %Y')
       %td= w.user
-      %td
-        %b=DmUser.get(w.user).name
-      %td
-        %b=DmUser.get(w.user).email
+      %td= DmUser.get(w.user).name
+      %td= DmUser.get(w.user).email
       %td
         %a{:href => "/weights/#{w.id}"} Show
       %td
@@ -41,7 +39,4 @@
       %td
         %a{:href => "/weights/#{w.id}/delete"} Delete
 :javascript
-  $(function() {
-    $( "#datepicker" ).datepicker({maxDate: "+0D", dateFormat: "yy-mm-dd"});
-
-    });
+  $(function() {$( "#datepicker" ).datepicker({maxDate: "+0D", dateFormat: "yy-mm-dd"});});
