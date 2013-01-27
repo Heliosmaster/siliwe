@@ -1,0 +1,2 @@
+require './siliwe'
+run Siliwe
