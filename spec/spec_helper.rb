@@ -10,10 +10,8 @@ set :run, false
 set :raise_errors, true
 set :logging, false
 
-module MyHelpers
-	def app
-	  Sinatra::Application
-	end
+def app
+	Siliwe
 end
 
 Webrat.configure do |config|
@@ -24,7 +22,5 @@ RSpec.configure do |config|
   config.before(:each) { DataMapper.auto_migrate! }
   config.include Rack::Test::Methods
   config.include Webrat::Methods
-  config.include Webrat::Matchers
-  config.include MyHelpers
-  
+  config.include Webrat::Matchers  
 end

@@ -25,9 +25,9 @@ end
 
 class Siliwe < Sinatra::Base
 	register Sinatra::Flash
+
 	DataMapper::setup(:default, "sqlite3://#{Dir.pwd}/siliwe.db")  
 	use Rack::Session::Cookie, :secret => 'superdupersecret'
-	set :sinatra_authentication_view_path, Pathname(__FILE__).dirname.expand_path + "views/"
 	DataMapper.finalize.auto_upgrade!
 
 	def check_permission
@@ -107,6 +107,7 @@ class Siliwe < Sinatra::Base
 	end
 
 	register Sinatra::SinatraAuthentication
-
+	set :sinatra_authentication_view_path, Pathname(__FILE__).dirname.expand_path + "views/"
+	
 	run! if app_file == $0
 end

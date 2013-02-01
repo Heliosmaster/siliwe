@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Siliwe" do
+describe Siliwe do
 	include Sinatra::Helpers
 
 	before do
