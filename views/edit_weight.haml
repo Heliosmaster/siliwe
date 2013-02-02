@@ -4,10 +4,12 @@
 - if @weight
   %form#edit{:action => "/weights/#{@weight.id}", :method => "post"}
     %input{:name => "_method", :type => "hidden", :value => "put"}
-      %input{:name => "value", :placeholder => @weight.value, :type => "text"}
-      %label{:for => "value"} weight value - e.g. 40
-      %input#datepicker{:name => "date", :type => "text", :placeholder => @weight.date.to_s, :readonly => true,:style=>"background-color:#fff;"}
-      %label{:for => "date"}= "date (yy-mm-dd format) - e.g. #{Date.today.to_s}"
+      .block
+        %input{:name => "value", :placeholder => @weight.value, :type => "text"}
+        %label{:for => "value"} weight value - e.g. 40
+      .block
+        %input#datepicker{:name => "date", :type => "text", :placeholder => @weight.date.to_s, :readonly => true,:style=>"background-color:#fff;"}
+        %label{:for => "date"}= "date (yy-mm-dd format) - e.g. #{Date.today.to_s}"
       %input{:type => "submit", :value => "Update weight"}
   %p
     %a{:href => "/weights/#{@weight.id}/delete"} Delete

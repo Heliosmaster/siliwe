@@ -30,8 +30,8 @@
       %td= w.value
       %td= w.date.strftime('%d %b %Y')
       %td= w.user
-      %td= DmUser.get(w.user).name
-      %td= DmUser.get(w.user).email
+      %td= User.get(w.user).name
+      %td= User.get(w.user).email
       %td
         %a{:href => "/weights/#{w.id}"} Show
       %td

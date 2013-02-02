@@ -5,8 +5,9 @@ require 'dm-validations'
 require 'haml'
 require "digest/sha1"
 require 'sinatra/flash'
-require "sinatra-authentication"
+#require "sinatra-authentication"
 require "pry"
+require_relative "models"
 
 class Weight  
   include DataMapper::Resource  
@@ -19,9 +20,6 @@ class Weight
   validates_within :date, :set => (Date.new(1900,1,1)..Date.today)
 end
 
-class DmUser
-  property :name, String, :required => true, :unique => true
-end
 
 class Siliwe < Sinatra::Base
 	register Sinatra::Flash
@@ -31,10 +29,49 @@ class Siliwe < Sinatra::Base
 	DataMapper.finalize.auto_upgrade!
 
 	def check_permission
-		if current_user.id != @weight.user
+		if current_user.nil? || current_user.id != @weight.user
 			flash[:notice] = "You are not authorized to do that."
 			redirect '/'
 		end
+	end
+
+	def logged_in?
+    	!!session[:user]
+	end
+
+	def current_user
+      session[:user] ? User.get(session[:user]) : nil
+    end
+
+	get '/signup' do
+		haml :signup
+	end
+
+	post '/signup' do
+		@user = User.create(params[:user])
+		if @user.valid? && @user.id
+			session[:user] = @user.id
+		end
+		redirect '/'
+	end
+
+	get '/login' do
+		haml :login
+	end
+
+	post '/login' do
+		if user = User.authenticate(params[:email], params[:password])
+        	session[:user] = user.id
+        	redirect '/'
+        else
+        	flash[:notice] = "Wrong username or password"
+        	redirect '/login'
+        end
+	end
+
+	get '/logout' do
+		session[:user] = nil
+		redirect '/'
 	end
 
 	get '/' do
@@ -102,12 +139,6 @@ class Siliwe < Sinatra::Base
 	  redirect '/'  
 	end
 
-	get '/users/?*?' do
-		raise Sinatra::NotFound
-	end
-
-	register Sinatra::SinatraAuthentication
-	set :sinatra_authentication_view_path, Pathname(__FILE__).dirname.expand_path + "views/"
-	
 	run! if app_file == $0
 end
+

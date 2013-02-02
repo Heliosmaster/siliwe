@@ -4,14 +4,14 @@ describe Siliwe do
 	include Sinatra::Helpers
 
 	before do
-		new_user = DmUser.new
+		new_user = User.new
 		new_user.email = "pippo@minni.com"
 		new_user.name  = "pippo"
 		new_user.password = "123"
 		new_user.password_confirmation = "123"
 		new_user.save!
 
-		new_user2 = DmUser.new
+		new_user2 = User.new
 		new_user2.email = "ciccio@papera.com"
 		new_user2.name = "ciccio"
 		new_user2.password = "123"
