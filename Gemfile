@@ -8,6 +8,7 @@ gem 'sinatra-flash'
 gem 'webrat'
 gem 'pry'
 gem 'rb-readline'
+gem 'rake'
 
 group :test do
   gem 'rspec'
