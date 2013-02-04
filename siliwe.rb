@@ -13,11 +13,12 @@ class Weight
   include DataMapper::Resource  
   property :id, Serial  
   property :value, Float, :required => true
-  property :date, Date, :required => true, 	:unique => true
-  property :user, Integer
+  property :date, Date, :required => true
+  property :user, Integer, :required => true
 
   validates_within :value, :set => (0..200)
   validates_within :date, :set => (Date.new(1900,1,1)..Date.today)
+  validates_uniqueness_of :date, :scope => :user
 end
 
 
@@ -80,7 +81,7 @@ class Siliwe < Sinatra::Base
 			@title = "Your weights"
 			flash[:notice] = "Hi #{current_user.name}!"
 		else
-			@weights = Weight.all
+			@weights = Weight.all(:order => [:date.asc])
 			@title = "All weights"
 			flash[:notice] = "Hi anonymous, why not log in?"
 		end
