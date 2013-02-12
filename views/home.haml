@@ -29,9 +29,9 @@
       %td= w.id
       %td= w.value
       %td= w.date.strftime('%d %b %Y')
-      %td= w.user
-      %td= User.get(w.user).name
-      %td= User.get(w.user).email
+      %td= w.user_id
+      %td= User.get(w.user_id).name
+      %td= User.get(w.user_id).email
       %td
         %a{:href => "/weights/#{w.id}"} Show
       %td

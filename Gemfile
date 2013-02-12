@@ -10,7 +10,7 @@ gem 'pry'
 gem 'rb-readline'
 gem 'rake'
 
-group :test do
+group :development,:test do
   gem 'rspec'
   gem 'rack-test'
 

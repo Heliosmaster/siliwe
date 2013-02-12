@@ -9,19 +9,6 @@ require 'sinatra/flash'
 require "pry"
 require_relative "models"
 
-class Weight  
-  include DataMapper::Resource  
-  property :id, Serial  
-  property :value, Float, :required => true
-  property :date, Date, :required => true
-  property :user, Integer, :required => true
-
-  validates_within :value, :set => (0..200)
-  validates_within :date, :set => (Date.new(1900,1,1)..Date.today)
-  validates_uniqueness_of :date, :scope => :user
-end
-
-
 class Siliwe < Sinatra::Base
 	register Sinatra::Flash
 
@@ -30,7 +17,7 @@ class Siliwe < Sinatra::Base
 	DataMapper.finalize.auto_upgrade!
 
 	def check_permission
-		if current_user.nil? || current_user.id != @weight.user
+		if current_user.nil? || current_user.id != @weight.user_id
 			flash[:notice] = "You are not authorized to do that."
 			redirect '/'
 		end
@@ -77,7 +64,7 @@ class Siliwe < Sinatra::Base
 
 	get '/' do
 		if logged_in?
-			@weights = Weight.all(:user => current_user.id, :order => [:date.asc])
+			@weights = Weight.all(:user_id => current_user.id, :order => [:date.asc])
 			@title = "Your weights"
 			flash[:notice] = "Hi #{current_user.name}!"
 		else
@@ -93,7 +80,7 @@ class Siliwe < Sinatra::Base
 			@weight = Weight.new
 			@weight.value = params[:value]
 			@weight.date = params[:date].empty? ? Date.today : Date.parse(params[:date])
-			@weight.user = current_user.id
+			@weight.user = current_user
 			flash[:notice] = (@weight.save) ? "Weight posted successfully" : "Error: #{@weight.errors.first.first}"
 			redirect '/'
 		else

@@ -117,7 +117,7 @@ describe Siliwe do
 			log_in
 			post_weight(100.5)
 			get '/'
-			Weight.all(:user => 1).first.value.should eq 100.5
+			Weight.all(:user_id => 1).first.value.should eq 100.5
 		end
 
 		it "should display all proper weights of a user" do
@@ -140,7 +140,7 @@ describe Siliwe do
 		it "should not post a value greater than 200" do
 			w = Weight.new
 			w.value = 201
-			w.user = 1
+			w.user_id = 1
 			w.date = Date.today
 			w.valid?.should be_false
 		end
@@ -149,13 +149,13 @@ describe Siliwe do
 			w = Weight.new
 			w.value = 199
 			w.date = Date.today
-			w.user = 1
+			w.user_id = 1
 			w.valid?.should be_true
 		end
 		it "should not allow measurements with future dates" do
 			w = Weight.new
 			w.value = 123
-			w.user = 1
+			w.user_id = 1
 			w.date = Date.today.next_day
 			w.valid?.should be_false
 		end
@@ -163,13 +163,13 @@ describe Siliwe do
 		it "should not allow the same date within the same user" do
 			w = Weight.new
 			w.value = 123
-			w.user = 1
+			w.user_id = 1
 			w.date = Date.today
 			w.save!
 
 			w2 = Weight.new
 			w2.value = 123
-			w2.user = 1
+			w2.user_id = 1
 			w2.date = Date.today
 			w2.valid?.should be_false
 		end
@@ -177,13 +177,13 @@ describe Siliwe do
 		it "should allow same date with different users" do
 			w = Weight.new
 			w.value = 123
-			w.user = 1
+			w.user_id = 1
 			w.date = Date.today
 			w.save!
 
 			w2 = Weight.new
 			w2.value = 123
-			w2.user = 2
+			w2.user_id = 2
 			w2.date = Date.today
 			w2.valid?.should be_true
 		end
