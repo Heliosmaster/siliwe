@@ -7,6 +7,7 @@ require "digest/sha1"
 require 'sinatra/flash'
 #require "sinatra-authentication"
 require "pry"
+require "json"
 require_relative "models"
 
 class Siliwe < Sinatra::Base
@@ -125,6 +126,19 @@ class Siliwe < Sinatra::Base
 	  check_permission
 	  @weight.destroy  
 	  redirect '/'  
+	end
+
+	get '/graph' do
+		@weights = Weight.all(:user_id => current_user.id, :order => [:date.asc])
+		total_days = (@weights.last.date - @weights.first.date)
+		@array = Array.new(@weights.length) {Array.new(2)}
+		for i in 0..@weights.length-1
+			weight = @weights[i]
+			#@array[i] = [((weight.date-@weights.first.date)/total_days).to_f, weight.value] 
+			@array[i] = [weight.date.to_s, weight.value]
+		end
+		#binding.pry
+		haml :show_chart
 	end
 
 	run! if app_file == $0

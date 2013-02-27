@@ -1,0 +1,31 @@
+%script{:src => "https://www.google.com/jsapi", :type => "text/javascript"}
+:javascript
+  var newArray = new Array();
+  var oldArray = #{@array.to_s};
+  for(var i=0;i<oldArray.length;i++){
+    newArray[i] = new Array();
+    newArray[i][0] = new Date(oldArray[i][0]);
+    newArray[i][1] = oldArray[i][1];
+  }
+
+  
+  google.load("visualization", "1", {packages:["corechart"]});
+  google.setOnLoadCallback(drawChart);
+  function drawChart() {
+    
+    var data = new google.visualization.DataTable();
+    data.addColumn('date', 'Date');
+    data.addColumn('number', 'Weight');
+    data.addRows(newArray);
+    var options = {
+      title: 'Weight graph'
+    };
+
+    var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+    chart.draw(data, {hAxis: {title: 'Date'},
+                      vAxis: {title: 'Weight'}
+                      }
+                      );
+  }
+
+#chart_div{:style => "width: 900px; height: 500px;"}
