@@ -33,10 +33,10 @@
       %td= User.get(w.user_id).name
       %td= User.get(w.user_id).email
       %td
-        %a{:href => "/weights/#{w.id}"} Show
+        %a.btn{:href => "/weights/#{w.id}"} Show
       %td
-        %a{:href => "/weights/#{w.id}/edit"} Edit
+        %a.btn{:href => "/weights/#{w.id}/edit"} Edit
       %td
-        %a{:href => "/weights/#{w.id}/delete"} Delete
+        %a.btn.btn-danger{:href => "/weights/#{w.id}/delete"} Delete
 :javascript
   $(function() {$( "#datepicker" ).datepicker({maxDate: "+0D", dateFormat: "yy-mm-dd"});});

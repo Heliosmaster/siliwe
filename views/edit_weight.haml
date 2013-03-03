@@ -10,9 +10,9 @@
       .block
         %input#datepicker{:name => "date", :type => "text", :placeholder => @weight.date.to_s, :readonly => true,:style=>"background-color:#fff;"}
         %label{:for => "date"}= "date (yy-mm-dd format) - e.g. #{Date.today.to_s}"
-      %input{:type => "submit", :value => "Update weight"}
+      %input.btn.btn-primary{:type => "submit", :value => "Update weight"}
   %p
-    %a{:href => "/weights/#{@weight.id}/delete"} Delete
+    %a.btn.btn-danger{:href => "/weights/#{@weight.id}/delete"} Delete
 - else
   %p Measure to edit not found.
 :javascript

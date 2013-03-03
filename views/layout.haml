@@ -23,9 +23,8 @@
       - if logged_in?
         logged in as 
         ="#{current_user.name}."
-        %a{:href=>"/logout"} logout
+        %a.btn.btn-primary{:href=>"/logout"} logout
       - else
-        %a{:href=>"/login"}Login
-        |
-        %a{:href=>"/signup"}Register
+        %a.btn.btn-primary{:href=>"/login"}Login
+        %a.btn.btn-primary{:href=>"/signup"}Register
       = yield

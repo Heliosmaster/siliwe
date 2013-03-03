@@ -141,6 +141,11 @@ class Siliwe < Sinatra::Base
 		haml :show_chart
 	end
 
+	not_found do
+		@title ="Page not found!"
+		haml :not_found
+	end
+
 	run! if app_file == $0
 end
 
