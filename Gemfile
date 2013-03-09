@@ -9,6 +9,9 @@ gem 'webrat'
 gem 'pry'
 gem 'rb-readline'
 gem 'rake'
+gem 'dropbox-sdk'
+gem 'oauth'
+gem 'json'
 
 group :development,:test do
   gem 'rspec'

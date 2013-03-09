@@ -5,9 +5,10 @@ require 'dm-validations'
 require 'haml'
 require "digest/sha1"
 require 'sinatra/flash'
-#require "sinatra-authentication"
 require "pry"
 require "json"
+require 'csv'
+
 require_relative "models"
 
 class Siliwe < Sinatra::Base
@@ -18,7 +19,7 @@ class Siliwe < Sinatra::Base
 	DataMapper.finalize.auto_upgrade!
 
 	def check_permission
-		if current_user.nil? || current_user.id != @weight.user_id
+		if current_user.nil? || (!@weight.nil? and (current_user.id != @weight.user_id))
 			flash[:notice] = "You are not authorized to do that."
 			redirect '/'
 		end
@@ -125,7 +126,7 @@ class Siliwe < Sinatra::Base
 	  @weight = Weight.get params[:id]  
 	  check_permission
 	  @weight.destroy  
-	  redirect '/'  
+	  redirect '/'
 	end
 
 	get '/graph' do
@@ -139,6 +140,26 @@ class Siliwe < Sinatra::Base
 		end
 		#binding.pry
 		haml :show_chart
+	end
+
+	get '/parse_csv' do
+		check_permission
+		csv_text = File.read('/home/davide/Dropbox/Libra.csv')
+		csv = CSV.parse(csv_text, :headers => :first_row, :col_sep => ";")
+		csv.each do |row|
+			@weight = Weight.new
+			@weight.value = row["Weight"]
+			@weight.date = row["Date"]
+			@weight.user = current_user
+			@weight.save!
+		end
+		redirect '/'
+	end
+
+	get '/delete_all_weights' do
+		check_permission
+		Weight.all(:user_id => current_user.id).destroy!
+		redirect '/'
 	end
 
 	not_found do
