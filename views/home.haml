@@ -11,6 +11,7 @@
     %input{:name => "value", :placeholder => "Weight (e.g. 50)", :type =>"text"}
     %input#datepicker{:name => "date", :placeholder => "Date", :readonly => true, :type => "text", :style=>"background-color:#fff;"}
     %input.btn.btn-primary{:type => "submit", :value => "Post new weight"}
+%a.btn.btn-success{:href=>"/graph"}graph
 %a.btn.btn-info{:href=>"/parse_csv"}parse csv
 %a.btn.btn-danger{:href=>"/delete_all_weights"}delete weights
 %table#home_table

@@ -144,7 +144,12 @@ class Siliwe < Sinatra::Base
 
 	get '/parse_csv' do
 		check_permission
-		csv_text = File.read('/home/davide/Dropbox/Libra.csv')
+		haml :parse_csv
+	end
+
+	post '/parse_csv' do
+		check_permission
+		csv_text = File.read(params[:file][:tempfile])
 		csv = CSV.parse(csv_text, :headers => :first_row, :col_sep => ";")
 		csv.each do |row|
 			@weight = Weight.new

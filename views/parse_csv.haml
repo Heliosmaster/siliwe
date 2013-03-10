@@ -1,0 +1,4 @@
+%form{:action => "/parse_csv", :enctype => "multipart/form-data", :method => "post"}
+  %label{:for => "file"} Upload file:
+  %input{:name => "file", :type => "file"}
+  %input.btn.btn-primary{:type => "submit", :value => "Upload"}
