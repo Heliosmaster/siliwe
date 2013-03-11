@@ -3,3 +3,4 @@ webrat.log
 .DS_STORE
 *~
 Gemfile.lock
+config.yml

@@ -8,6 +8,9 @@ require 'sinatra/flash'
 require "pry"
 require "json"
 require 'csv'
+require 'omniauth'
+require 'omniauth-google-oauth2'
+require 'yaml'
 
 require_relative "models"
 
@@ -17,6 +20,19 @@ class Siliwe < Sinatra::Base
 	DataMapper::setup(:default, "sqlite3://#{Dir.pwd}/siliwe.db")  
 	use Rack::Session::Cookie, :secret => 'superdupersecret'
 	DataMapper.finalize.auto_upgrade!
+
+	config = YAML.load_file("config.yml");
+	client_id = config["client_id"]
+	client_secret = config["client_secret"]
+
+
+	use OmniAuth::Builder do
+    	provider :google_oauth2, client_id, client_secret
+  	end
+
+  	OmniAuth.config.on_failure do |env|
+   		[302, {'Location' => '/auth/failure', 'Content-Type'=> 'text/html'}, []]
+  	end
 
 	def check_permission
 		if current_user.nil? || (!@weight.nil? and (current_user.id != @weight.user_id))
@@ -33,32 +49,6 @@ class Siliwe < Sinatra::Base
       session[:user] ? User.get(session[:user]) : nil
     end
 
-	get '/signup' do
-		haml :signup
-	end
-
-	post '/signup' do
-		@user = User.create(params[:user])
-		if @user.valid? && @user.id
-			session[:user] = @user.id
-		end
-		redirect '/'
-	end
-
-	get '/login' do
-		haml :login
-	end
-
-	post '/login' do
-		if user = User.authenticate(params[:email], params[:password])
-        	session[:user] = user.id
-        	redirect '/'
-        else
-        	flash[:notice] = "Wrong username or password"
-        	redirect '/login'
-        end
-	end
-
 	get '/logout' do
 		session[:user] = nil
 		redirect '/'
@@ -68,11 +58,9 @@ class Siliwe < Sinatra::Base
 		if logged_in?
 			@weights = Weight.all(:user_id => current_user.id, :order => [:date.asc])
 			@title = "Your weights"
-			flash[:notice] = "Hi #{current_user.name}!"
 		else
 			@weights = Weight.all(:order => [:date.asc])
 			@title = "All weights"
-			flash[:notice] = "Hi anonymous, why not log in?"
 		end
 		haml :home
 	end
@@ -119,7 +107,7 @@ class Siliwe < Sinatra::Base
 		@weight = Weight.get params[:id]
 		check_permission
 		@title = "Deletion of measure ##{params[:id]}"
-		haml :delete
+		haml :delete_weight
 	end
 
 	delete '/weights/:id' do  
@@ -130,6 +118,7 @@ class Siliwe < Sinatra::Base
 	end
 
 	get '/graph' do
+		check_permission
 		@weights = Weight.all(:user_id => current_user.id, :order => [:date.asc])
 		total_days = (@weights.last.date - @weights.first.date)
 		@array = Array.new(@weights.length) {Array.new(2)}
@@ -156,7 +145,7 @@ class Siliwe < Sinatra::Base
 			@weight.value = row["Weight"]
 			@weight.date = row["Date"]
 			@weight.user = current_user
-			@weight.save!
+			@weight.save! if @weight.valid?
 		end
 		redirect '/'
 	end
@@ -170,6 +159,30 @@ class Siliwe < Sinatra::Base
 	not_found do
 		@title ="Page not found!"
 		haml :not_found
+	end
+
+	get '/auth/:provider/callback' do
+		resp = request.env["omniauth.auth"]
+		if user = User.all(:email => resp.info.email).first
+			session[:user] = user.id
+        	redirect '/'
+		else
+			@user = User.new
+			@user.name = resp.info.name
+			@user.email = resp.info.email
+			if @user.save
+				session[:user] = @user.id
+				redirect '/'
+			else
+				flash[:notice] = "Error with signup"
+				redirect '/'
+			end
+		end
+	end
+
+	get '/auth/failure' do
+		flash[:notice] ="Authentication with OAuth failed"
+		redirect "/"
 	end
 
 	run! if app_file == $0
