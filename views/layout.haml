@@ -18,11 +18,13 @@
             %li.active
               %a{:href => "/"} Home
   .container
-    %p{ :style => 'text-align:center;'}= flash[:notice]
+    %p.text-error{ :style => 'text-align:center;'}= flash[:error]
+    %p.text-info{ :style => 'text-align:center;'}= flash[:notice]
+    %p.text-success{ :style => 'text-align:center;'}= flash[:success]
     %p{ :style => 'text-align:right;'}
       - if logged_in?
-        logged in as 
-        ="#{current_user.name}."
+        Logged in as 
+        %b="#{current_user.name}"
         %a.btn.btn-primary{:href=>"/logout"} logout
       - else
         %a.btn.btn-primary{:href=>"/auth/google_oauth2"} Login / Signup

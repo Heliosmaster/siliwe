@@ -2,9 +2,6 @@
 	margin-right:auto;
 	margin-left:auto;
 }
-input[type="submit"]{
-	margin-bottom:10px;
-}
 table {
    width: 100%;
    border: 1px solid #cef;

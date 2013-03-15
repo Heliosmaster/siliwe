@@ -40,7 +40,7 @@ class Siliwe < Sinatra::Base
 
 	def check_permission
 		if current_user.nil? || (!@weight.nil? and (current_user.id != @weight.user_id))
-			flash[:notice] = "You are not authorized to do that."
+			flash[:error] = "You are not authorized to do that."
 			redirect '/'
 		end
 	end
@@ -75,10 +75,14 @@ class Siliwe < Sinatra::Base
 			@weight.value = params[:value]
 			@weight.date = params[:date].empty? ? Date.today : Date.parse(params[:date])
 			@weight.user = current_user
-			flash[:notice] = (@weight.save) ? "Weight posted successfully" : "Error: #{@weight.errors.first.first}"
+			if @weight.save
+				flash[:success] = "Weight posted successfully"
+			else
+				flash[:error] = "Error: #{@weight.errors.first.first}"
+			end
 			redirect '/'
 		else
-			flash[:notice] = "You must login"
+			flash[:error] = "You must login"
 			redirect '/login'
 		end
 	end
@@ -128,10 +132,8 @@ class Siliwe < Sinatra::Base
 		@array = Array.new(@weights.length) {Array.new(2)}
 		for i in 0..@weights.length-1
 			weight = @weights[i]
-			#@array[i] = [((weight.date-@weights.first.date)/total_days).to_f, weight.value] 
 			@array[i] = [weight.date.to_s, weight.value]
 		end
-		#binding.pry
 		haml :show_chart
 	end
 
@@ -178,14 +180,14 @@ class Siliwe < Sinatra::Base
 				session[:user] = @user.id
 				redirect '/'
 			else
-				flash[:notice] = "Error with signup"
+				flash[:error] = "Error with signup"
 				redirect '/'
 			end
 		end
 	end
 
 	get '/auth/failure' do
-		flash[:notice] ="Authentication with OAuth failed"
+		flash[:error] ="Authentication with OAuth failed"
 		redirect "/"
 	end
 
