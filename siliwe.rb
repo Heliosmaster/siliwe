@@ -27,7 +27,11 @@ class Siliwe < Sinatra::Base
 
 
 	use OmniAuth::Builder do
-    	provider :google_oauth2, client_id, client_secret
+    	provider :google_oauth2, client_id, client_secret,
+    		{
+             :scope => "userinfo.email,userinfo.profile",
+             :approval_prompt => "auto"
+           }
   	end
 
   	OmniAuth.config.on_failure do |env|
