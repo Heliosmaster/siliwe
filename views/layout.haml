@@ -4,6 +4,8 @@
     %title= @title
     %link{:href=>"/css/bootstrap.css", :rel => "stylesheet", :media => "screen"}
     %link{:href=>"/css/style.css", :rel => "stylesheet", :media => "screen"}
+    %script{:src => "http://code.jquery.com/jquery.js"}
+    %script{:src => "js/bootstrap.min.js"}    
   %body
   .navbar
     .navbar-inner
@@ -12,15 +14,18 @@
           %span.icon-bar
           %span.icon-bar
           %span.icon-bar
-        %a.brand{:href => "/"} Siliwe
+        //%a.brand{:href => "/"} Siliwe
         .nav-collapse
           %ul.nav
-            %li.active
+            %li
               %a{:href => "/"} Home
   .container
-    %p.text-error{ :style => 'text-align:center;'}= flash[:error]
-    %p.text-info{ :style => 'text-align:center;'}= flash[:notice]
-    %p.text-success{ :style => 'text-align:center;'}= flash[:success]
+    - if !flash[:error].nil?
+      %p.alert.alert-error.text-error{ :style => 'text-align:center;'}= flash[:error]
+    - if !flash[:notice].nil?
+      %p.alert.alert-info.text-info{ :style => 'text-align:center;'}= flash[:notice]
+    - if !flash[:success].nil?
+      %p.alert.alert-success.text-success{ :style => 'text-align:center;'}= flash[:success]
     %p{ :style => 'text-align:right;'}
       - if logged_in?
         Logged in as 
@@ -29,3 +34,9 @@
       - else
         %a.btn.btn-primary{:href=>"/auth/google_oauth2"} Login / Signup
       = yield
+  %footer
+    %p 
+      Siliwe - 2013 - It's all
+      %a{:href=>"http://github.com/Heliosmaster"} his
+      fault
+      

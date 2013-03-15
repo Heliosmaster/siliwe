@@ -1,5 +1,13 @@
+%script{:src => "js/jasny-bootstrap.js"}
+%link{:href=>"/css/jasny-bootstrap.css", :rel => "stylesheet", :media => "screen"}
 %form{:action => "/parse_csv", :enctype => "multipart/form-data", :method => "post"}
-  %label{:for => "file"} Upload file:
-  %input{:name => "file", :type => "file"}
-  %input.btn.btn-primary{:type => "submit", :value => "Upload"}
+  .fileupload.fileupload-new{"data-provides" => "fileupload"}
+    %span.btn.btn-file
+      %span.fileupload-new Select file
+      %span.fileupload-exists Change
+      %input{:type => "file", :name=>"file"}
+    %span.fileupload-preview
+    %a.close.fileupload-exists{"data-dismiss" => "fileupload", :href => "#", :style => "float: none"} ×
+    %input.btn.btn-success{:type => "submit", :value => "Go ahead and upload!"}
 %a.btn.btn-primary{:onclick => 'history.back();'} Back
+

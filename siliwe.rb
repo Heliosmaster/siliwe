@@ -21,22 +21,19 @@ class Siliwe < Sinatra::Base
 	use Rack::Session::Cookie, :secret => 'superdupersecret'
 	DataMapper.finalize.auto_upgrade!
 
-	config = YAML.load_file("config.yml");
-	client_id = config["client_id"]
-	client_secret = config["client_secret"]
-
+	config_file = YAML.load_file("config.yml");
 
 	use OmniAuth::Builder do
-    	provider :google_oauth2, client_id, client_secret,
-    		{
-             :scope => "userinfo.email,userinfo.profile",
-             :approval_prompt => "auto"
-           }
-  	end
+		provider :google_oauth2, config_file["client_id"], config_file["client_secret"],
+		{
+			:scope => "userinfo.email,userinfo.profile",
+			:approval_prompt => "auto"
+		}
+	end
 
-  	OmniAuth.config.on_failure do |env|
-   		[302, {'Location' => '/auth/failure', 'Content-Type'=> 'text/html'}, []]
-  	end
+	OmniAuth.config.on_failure do |env|
+		[302, {'Location' => '/auth/failure', 'Content-Type'=> 'text/html'}, []]
+	end
 
 	def check_permission
 		if current_user.nil? || (!@weight.nil? and (current_user.id != @weight.user_id))
@@ -46,12 +43,12 @@ class Siliwe < Sinatra::Base
 	end
 
 	def logged_in?
-    	!!session[:user]
+		!!session[:user]
 	end
 
 	def current_user
-      session[:user] ? User.get(session[:user]) : nil
-    end
+		session[:user] ? User.get(session[:user]) : nil
+	end
 
 	get '/logout' do
 		session[:user] = nil
@@ -61,9 +58,11 @@ class Siliwe < Sinatra::Base
 	get '/' do
 		if logged_in?
 			@weights = Weight.all(:user_id => current_user.id, :order => [:date.asc])
+			@default_value = @weights.empty? ? 50 : @weights.last.value
 			@title = "Your weights"
 		else
-			@weights = Weight.all(:order => [:date.asc])
+			@weights = nil
+			@default_value = 0.0
 			@title = "All weights"
 		end
 		haml :home
@@ -119,10 +118,10 @@ class Siliwe < Sinatra::Base
 	end
 
 	delete '/weights/:id' do  
-	  @weight = Weight.get params[:id]  
-	  check_permission
-	  @weight.destroy  
-	  redirect '/'
+		@weight = Weight.get params[:id]  
+		check_permission
+		@weight.destroy  
+		redirect '/'
 	end
 
 	get '/graph' do
@@ -171,7 +170,8 @@ class Siliwe < Sinatra::Base
 		resp = request.env["omniauth.auth"]
 		if user = User.all(:email => resp.info.email).first
 			session[:user] = user.id
-        	redirect '/'
+			flash[:success] = "Successfully logged in"
+			redirect '/'
 		else
 			@user = User.new
 			@user.name = resp.info.name

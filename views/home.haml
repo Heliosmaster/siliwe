@@ -1,26 +1,23 @@
-%link{:href => "http://code.jquery.com/ui/1.10.0/themes/base/jquery-ui.css", :rel => "stylesheet"}/
-%script{:src => "http://code.jquery.com/jquery-1.8.3.js"}
-%script{:src => "http://code.jquery.com/ui/1.10.0/jquery-ui.js"}
-:javascript
-  $(document).ready(function(){
-   $("tr:even").addClass("even");
-   $("tr:odd").addClass("odd");
-  });
+%link{:href=>"/css/custom-theme/jquery-ui-1.10.0.custom.css", :rel => "stylesheet", :media => "screen"} 
+%script{:src => "js/jquery.mousewheel.js"}
+%script{:src => "http://code.jquery.com/ui/1.10.2/jquery-ui.js"}
 %section#add
-  %form{:action => "/", :method => "post"}
-    %input{:name => "value", :placeholder => "Weight (e.g. 50)", :type =>"text"}
-    %input#datepicker{:name => "date", :placeholder => "Date", :readonly => true, :type => "text", :style=>"background-color:#fff;"}
+  %form.form-horizontal{:action => "/", :method => "post"}
+    .input-append
+      %input.spinner{:name => "value", :placeholder => "Weight (e.g. 50)", :style=>"width:150px;"}
+      .add-on Kg
+    %input.datepicker{:name => "date", :placeholder => "Date", :readonly => true, :type => "text", :style=>"background-color:#fff;"} 
+
     %input.btn.btn-primary{:type => "submit", :value => "Post new weight"}
 %a.btn.btn-success{:href=>"/graph"} Graph
 %a.btn.btn-info{:href=>"/parse_csv"} Load from csv
 %a.btn.btn-danger{:href=>"/delete_all_weights"} Delete all weights
-%table#home_table
+%table.table.table-striped
   %thead
     %tr
       %th id
       %th value
       %th date
-      %th user id
       %th username
       %th email
       %th
@@ -32,7 +29,6 @@
       %td= w.id
       %td= w.value
       %td= w.date.strftime('%d %b %Y')
-      %td= w.user_id
       %td= User.get(w.user_id).name
       %td= User.get(w.user_id).email
       %td
@@ -43,4 +39,30 @@
         %a.btn.btn-danger{:href => "/weights/#{w.id}/delete"} Delete
 
 :javascript
-  $(function() {$( "#datepicker" ).datepicker({maxDate: "+0D", dateFormat: "yy-mm-dd"});});
+  $(function() {
+    $('.datepicker').datepicker({
+      maxDate: "+0D", 
+      dateFormat: "yy-mm-dd",
+      changeMonth: true,
+      changeYear: true
+    });
+  });
+  $(function() {
+    $('.spinner').spinner({
+      min: 0,
+      max: 200,
+      step: 0.1,
+    });
+    });
+  $(function() {
+    $('.spinner').focus(function() {
+      $(this).parent().addClass('ui-spinner-focused');
+    });
+    $('.spinner').focusout(function() {
+      $(this).parent().removeClass('ui-spinner-focused');
+    });
+  });
+  $(function() {
+    $('.spinner').one('mouseover', function() { $(this).val(#{@default_value}) });
+  });
+  
