@@ -17,6 +17,7 @@
     %tr
       %th id
       %th value
+      %th trend
       %th date
       %th username
       %th email
@@ -28,6 +29,7 @@
     %tr
       %td= w.id
       %td= w.value
+      %td= w.trend
       %td= w.date.strftime('%d %b %Y')
       %td= User.get(w.user_id).name
       %td= User.get(w.user_id).email

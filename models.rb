@@ -3,6 +3,7 @@ class Weight
   property :id, Serial  
   property :value, Float, :required => true
   property :date, Date, :required => true
+  property :trend, Float
 
   validates_within :value, :set => (0..200)
   validates_within :date, :set => (Date.new(1900,1,1)..Date.today)

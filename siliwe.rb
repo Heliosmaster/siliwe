@@ -14,6 +14,7 @@ require 'yaml'
 require_relative "models"
 
 class Siliwe < Sinatra::Base
+  use Rack::MethodOverride
   register Sinatra::Flash
 
   DataMapper::setup(:default, "sqlite3://#{Dir.pwd}/siliwe.db")  
@@ -49,6 +50,15 @@ class Siliwe < Sinatra::Base
     session[:user] ? User.get(session[:user]) : nil
   end
 
+  def compute_trend(value,last_weight)
+    if last_weight.nil?
+      value
+    else
+      last_trend = last_weight.trend
+      (((value-last_trend)/10).round(1)+last_trend).round(1)
+    end
+  end
+
   get '/logout' do
     session[:user] = nil
     redirect '/'
@@ -57,7 +67,7 @@ class Siliwe < Sinatra::Base
   get '/' do
     if logged_in?
       @weights = Weight.all(:user_id => current_user.id, :order => [:date.asc])
-      @default_value = @weights.empty? ? 50 : @weights.last.value
+      @default_value = @weights.empty? ? 0.0 : @weights.last.value
       @title = "Your weights"
     else
       @weights = []
@@ -72,6 +82,8 @@ class Siliwe < Sinatra::Base
       @weight = Weight.new
       @weight.value = params[:value]
       @weight.date = params[:date].empty? ? Date.today : Date.parse(params[:date])
+      @weight.trend = compute_trend(@weight.value,Weight.all(:user_id => current_user.id, :date.lt => @weight.date, :order => [:date.asc]).last)
+      #binding.pry
       @weight.user = current_user
       if @weight.save
         flash[:success] = "Weight posted successfully"
@@ -116,10 +128,10 @@ class Siliwe < Sinatra::Base
     haml :delete_weight
   end
 
-  delete '/weights/:id' do  
+  delete '/weights/:id' do
     @weight = Weight.get params[:id]  
     check_permission
-    @weight.destroy  
+    @weight.destroy!
     redirect '/'
   end
 
@@ -148,6 +160,7 @@ class Siliwe < Sinatra::Base
       @weight = Weight.new
       @weight.value = row["Weight"]
       @weight.date = row["Date"]
+      @weight.trend = row["Trend"]
       @weight.user = current_user
       @weight.save! if @weight.valid?
     end
