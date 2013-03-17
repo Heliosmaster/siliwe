@@ -139,10 +139,10 @@ class Siliwe < Sinatra::Base
     check_permission
     @weights = Weight.all(:user_id => current_user.id, :order => [:date.asc])
     total_days = (@weights.last.date - @weights.first.date)
-    @array = Array.new(@weights.length) {Array.new(2)}
+    @array = Array.new(@weights.length) {Array.new(3)}
     for i in 0..@weights.length-1
       weight = @weights[i]
-      @array[i] = [weight.date.to_s, weight.value]
+      @array[i] = [weight.date.to_s, weight.value, weight.trend]
     end
     haml :show_chart
   end
@@ -160,7 +160,7 @@ class Siliwe < Sinatra::Base
       @weight = Weight.new
       @weight.value = row["Weight"]
       @weight.date = row["Date"]
-      @weight.trend = row["Trend"]
+      @weight.trend = row["Trend"].to_f.round(1)
       @weight.user = current_user
       @weight.save! if @weight.valid?
     end

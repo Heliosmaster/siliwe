@@ -2,12 +2,33 @@
 :javascript
   var newArray = new Array();
   var oldArray = #{@array.to_s};
-  for(var i=0;i<oldArray.length;i++){
+
+  var l = oldArray.length;
+
+  for(var i=0;i<l;i++){
     newArray[i] = new Array();
     newArray[i][0] = new Date(oldArray[i][0]);
-    newArray[i][1] = oldArray[i][1];
+    newArray[i][1] = null;
+    newArray[i][2] = oldArray[i][2];
   }
 
+  for(var i=0;i<l;i++){
+    newArray[l+3*i] = new Array();
+    newArray[l+3*i][0] = new Date(oldArray[i][0]);
+    newArray[l+3*i][1] = oldArray[i][1];
+    newArray[l+3*i][2] = null;
+
+    newArray[l+3*i+1] = new Array();
+    newArray[l+3*i+1][0] = new Date(oldArray[i][0]);
+    newArray[l+3*i+1][1] = oldArray[i][2];
+    newArray[l+3*i+1][2] = null;
+
+    newArray[l+3*i+2] = new Array();
+    newArray[l+3*i+2][0] = new Date(oldArray[i][0]);
+    newArray[l+3*i+2][1] = null;
+    newArray[l+3*i+2][2] = null;
+
+  }
   
   google.load("visualization", "1", {packages:["corechart"]});
   google.setOnLoadCallback(drawChart);
@@ -16,16 +37,21 @@
     var data = new google.visualization.DataTable();
     data.addColumn('date', 'Date');
     data.addColumn('number', 'Weight');
+    data.addColumn('number', 'Trend');
     data.addRows(newArray);
     var options = {
       title: 'Weight graph'
     };
 
     var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
-    chart.draw(data, {hAxis: {title: 'Date'},
-                      vAxis: {title: 'Weight'}
-                      }
-                      );
+    chart.draw(data, {
+                        hAxis: {title: 'Date'},
+                        vAxis: {title: 'Weight'},
+                        series: {
+                                  0:{pointSize: 1}, 
+                                  1:{curveType: 'function'}
+                                }
+                      });
   }
 
 #chart_div{:style => "width: 900px; height: 500px;"}
