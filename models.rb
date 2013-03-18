@@ -29,6 +29,21 @@ class Weight
     end
   end
 
+  def self.update_values(params)
+    weight = Weight.get(params[:id])
+    date = params[:date].empty? ? weight.date : Date.parse(params[:date])
+    weight.update(:value => params[:value], :date => date)
+  end
+
+  def self.create_from_csv(row,user)
+   @weight = Weight.new
+   @weight.value = row["Weight"]
+   @weight.date = row["Date"]
+   @weight.trend = row["Trend"].to_f.round(1)
+   @weight.user = user
+   @weight.save! if @weight.valid?
+ end
+
 end
 
 class User
