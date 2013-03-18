@@ -7,19 +7,14 @@ class Siliwe < Sinatra::Base
     else
       @weights = []
       @default_value = 0.0
-      @title = "All weights"
+      @title = "Welcome!"
     end
     haml :home
   end
 
   post '/' do
     if logged_in?
-      @weight = Weight.new
-      @weight.value = params[:value]
-      @weight.date = params[:date].empty? ? Date.today : Date.parse(params[:date])
-      @weight.user = current_user
-      @weight.trend = @weight.compute_trend
-      if @weight.save
+      if Weight.create_from_params(params,current_user)
         flash[:success] = "Weight posted successfully"
       else
         flash[:error] = "Error: #{@weight.errors.first.first}"
@@ -27,46 +22,52 @@ class Siliwe < Sinatra::Base
       redirect '/'
     else
       flash[:error] = "You must login"
-      redirect '/login'
+      redirect '/'
     end
   end
 
-  get '/weights/:id' do
+  ['/weights/*', '/graph', '/parse_csv'].each do |path|
+    before path do
+      check_permission
+    end
+  end
+
+  get '/weights/wipe' do
+    Weight.all(:user_id => current_user.id).destroy!
+    redirect '/'
+  end
+
+  before '/weights/:id*' do
     @weight = Weight.get params[:id]
-    check_permission
+  end
+
+  get '/weights/:id' do
     @title = "Measure ##{params[:id]}"
     haml :show_weight
   end
 
 
   get '/weights/:id/edit' do
-    check_permission
-    @weight = Weight.get params[:id]
     @title = "Edit measure ##{params[:id]}"
     haml :edit_weight
   end
 
   put '/weights/:id' do
-    check_permission
     Weight.update_values(params)
     redirect '/'
   end
 
   get '/weights/:id/delete' do
-    check_permission
-    @weight = Weight.get params[:id]
     @title = "Deletion of measure ##{params[:id]}"
     haml :delete_weight
   end
 
   delete '/weights/:id' do
-    check_permission
     Weight.get(params[:id]).destroy
     redirect '/'
   end
 
   get '/graph' do
-    check_permission
     @weights = Weight.all(:user_id => current_user.id, :order => [:date.asc])
     total_days = (@weights.last.date - @weights.first.date)
     @array = Array.new(@weights.length) {Array.new(3)}
@@ -78,21 +79,13 @@ class Siliwe < Sinatra::Base
   end
 
   get '/parse_csv' do
-    check_permission
     haml :parse_csv
   end
 
   post '/parse_csv' do
-    check_permission
     csv_text = File.read(params[:file][:tempfile])
     csv = CSV.parse(csv_text, :headers => :first_row, :col_sep => ";")
     csv.each {|row| Weight.create_from_csv(row,current_user) }
-    redirect '/'
-  end
-
-  get '/delete_all_weights' do
-    check_permission
-    Weight.all(:user_id => current_user.id).destroy!
     redirect '/'
   end
 
@@ -113,16 +106,14 @@ class Siliwe < Sinatra::Base
       flash[:success] = "Successfully logged in"
       redirect '/'
     else
-      @user = User.new
-      @user.name = resp.info.name
-      @user.email = resp.info.email
-      if @user.save
+      @user = User.create(:name => resp.info.name, :email => resp.info.email)
+      if @user.saved?
         session[:user] = @user.id
-        redirect '/'
+        flash[:success] = "Account successfully created"
       else
         flash[:error] = "Error with signup"
-        redirect '/'
       end
+      redirect '/'
     end
   end
 
