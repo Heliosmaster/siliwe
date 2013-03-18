@@ -10,6 +10,25 @@ class Weight
   validates_uniqueness_of :date, :scope => :user
 
   belongs_to :user
+
+  def prev
+    Weight.all(:user_id => self.user.id, :date.lt => self.date, :order => [:date.asc]).last
+  end
+
+  def next
+    Weight.all(:user_id => self.user.id, :date.gt => self.date, :order => [:date.asc]).first
+  end
+
+  def compute_trend
+    prev_weight = self.prev
+    if prev_weight.nil?
+      self.value
+    else
+      last_trend = prev_weight.trend
+      (((self.value-last_trend)/10).round(1)+last_trend).round(1)
+    end
+  end
+
 end
 
 class User
