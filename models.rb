@@ -50,7 +50,7 @@ class Weight
   weight.value = params[:value]
   weight.date = date
   weight.user = user
-  weight.trend = @weight.compute_trend
+  weight.trend = weight.compute_trend
   weight.save
 end
 
