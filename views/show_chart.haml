@@ -1,4 +1,4 @@
-%script{:src => "https://www.google.com/jsapi", :type => "text/javascript"}
+%script{:src => "http://code.highcharts.com/stock/highstock.js"}
 :javascript
   var newArray = new Array();
   var oldArray = #{@array.to_s};
@@ -7,51 +7,96 @@
 
   for(var i=0;i<l;i++){
     newArray[i] = new Array();
-    newArray[i][0] = new Date(oldArray[i][0]);
-    newArray[i][1] = null;
-    newArray[i][2] = oldArray[i][2];
+    newArray[i][0] = oldArray[i][0];
+    newArray[i][1] = oldArray[i][1];
+    //newArray[i][2] = oldArray[i][2];
   }
 
+  var newArray2 = new Array();
   for(var i=0;i<l;i++){
-    newArray[l+3*i] = new Array();
-    newArray[l+3*i][0] = new Date(oldArray[i][0]);
-    newArray[l+3*i][1] = oldArray[i][1];
-    newArray[l+3*i][2] = null;
-
-    newArray[l+3*i+1] = new Array();
-    newArray[l+3*i+1][0] = new Date(oldArray[i][0]);
-    newArray[l+3*i+1][1] = oldArray[i][2];
-    newArray[l+3*i+1][2] = null;
-
-    newArray[l+3*i+2] = new Array();
-    newArray[l+3*i+2][0] = new Date(oldArray[i][0]);
-    newArray[l+3*i+2][1] = null;
-    newArray[l+3*i+2][2] = null;
-
-  }
-  
-  google.load("visualization", "1", {packages:["corechart"]});
-  google.setOnLoadCallback(drawChart);
-  function drawChart() {
-    
-    var data = new google.visualization.DataTable();
-    data.addColumn('date', 'Date');
-    data.addColumn('number', 'Weight');
-    data.addColumn('number', 'Trend');
-    data.addRows(newArray);
-    var options = {
-      title: 'Weight graph'
-    };
-
-    var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
-    chart.draw(data, {
-                        hAxis: {title: 'Date'},
-                        vAxis: {title: 'Weight'},
-                        series: {
-                                  0:{pointSize: 1}, 
-                                  1:{curveType: 'function'}
-                                }
-                      });
+    newArray2[i] = new Array();
+    newArray2[i][0] = oldArray[i][0];
+    newArray2[i][1] = oldArray[i][2];
   }
 
-#chart_div{:style => "width: 900px; height: 500px;"}
+  $(function() {
+    // Create the chart
+    $('#container').highcharts('StockChart', {
+        chart: {
+        },
+        colors: [
+          '#2f7ed8',
+          '#d6492c',
+        ],
+        rangeSelector: {
+            buttons: [{
+                  type: 'month',
+                  count: 1,
+                  text: '1m'
+                }, {
+                  type: 'month',
+                  count: 3,
+                  text: '3m'
+                }, {
+                  type: 'month',
+                  count: 6,
+                  text: '6m'
+                },{
+                  type: 'year',
+                  count: 1,
+                  text: '1y'
+                },{
+                  type: 'year',
+                  count: 2,
+                  text: '2y'
+                },{
+                  type: 'all',
+                  text: 'All'
+              }],
+            selected: 5,
+        },
+        legend: {
+          enabled: true,
+        },
+        title: {
+            text: 'Weights and trend'
+        },
+        xAxis: {
+          type: 'datetime',
+        },
+        credits: {
+          enabled: false,
+        },
+        yAxis: {
+          title: {
+            text: 'Value (kg)'
+          },
+          minRange: 5,
+        },
+        tooltip: {
+          xDateFormat: '%e %B %Y',
+          shared: true
+        },
+        series: [{
+            name: 'Trend',
+            data: newArray2,
+            type: 'spline',
+            tooltip: {
+              valueDecimals: 1
+            }
+        },{
+            name: 'Weight',
+            data: newArray,
+            type: 'spline',
+            lineWidth: 0,
+            marker: {
+              enabled: true,
+              symbol: 'circle',
+            },
+            tooltip: {
+              valueDecimals: 1
+            }
+        }]
+    });
+  });
+#container{:style => "min-width: 400px; height: 500px; margin: 0 auto"}

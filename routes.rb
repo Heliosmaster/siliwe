@@ -73,7 +73,7 @@ class Siliwe < Sinatra::Base
     @array = Array.new(@weights.length) {Array.new(3)}
     for i in 0..@weights.length-1
       weight = @weights[i]
-      @array[i] = [weight.date.to_s, weight.value, weight.trend]
+      @array[i] = [weight.date.strftime("%Q").to_i, weight.value, weight.trend]
     end
     haml :show_chart
   end
