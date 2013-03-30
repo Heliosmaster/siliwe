@@ -15,29 +15,23 @@
 %table.table.table-striped.table-bordered
   %thead
     %tr
-      %th id
+      %th date
       %th value
       %th trend
-      %th date
       %th username
       %th email
-      %th
-      %th
       %th
   %tbody    
   - @weights.each do |w|
     %tr
-      %td= w.id
+      %td= w.date.strftime('%d %b %Y')
       %td= w.value
       %td= w.trend
-      %td= w.date.strftime('%d %b %Y')
       %td= User.get(w.user_id).name
       %td= User.get(w.user_id).email
-      %td
+      %td{:style=> "text-align:center;"}
         %a.btn{:href => "/weights/#{w.id}"} Show
-      %td
         %a.btn{:href => "/weights/#{w.id}/edit"} Edit
-      %td
         %a.btn.btn-danger{:href => "/weights/#{w.id}/delete"} Delete
 
 :javascript
