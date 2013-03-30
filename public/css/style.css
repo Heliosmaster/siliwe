@@ -9,6 +9,15 @@
 .table {
   margin-top: 10px;
 }
+.container{
+  margin-top:10px;
+}
+.headbar{
+  margin-bottom:20px;
+}
+.login{
+  float:right;
+}
 footer {
   text-align: center;
   padding: 15px 0;
