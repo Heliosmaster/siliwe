@@ -1,22 +1,18 @@
 %script{:src => "http://code.highcharts.com/stock/highstock.js"}
 :javascript
-  var newArray = new Array();
+  var weights = new Array();
+  var trend = new Array();
   var oldArray = #{@array.to_s};
 
   var l = oldArray.length;
 
   for(var i=0;i<l;i++){
-    newArray[i] = new Array();
-    newArray[i][0] = oldArray[i][0];
-    newArray[i][1] = oldArray[i][1];
-    //newArray[i][2] = oldArray[i][2];
-  }
-
-  var newArray2 = new Array();
-  for(var i=0;i<l;i++){
-    newArray2[i] = new Array();
-    newArray2[i][0] = oldArray[i][0];
-    newArray2[i][1] = oldArray[i][2];
+    weights[i] = new Array();
+    weights[i][0] = oldArray[i][0];
+    weights[i][1] = oldArray[i][1];
+    trend[i] = new Array();
+    trend[i][0] = weights[i][0];
+    trend[i][1] = oldArray[i][2];
   }
 
   $(function() {
@@ -63,6 +59,7 @@
         },
         xAxis: {
           type: 'datetime',
+          ordinal: false,
         },
         credits: {
           enabled: false,
@@ -79,18 +76,22 @@
         },
         series: [{
             name: 'Trend',
-            data: newArray2,
+            data: trend,
             type: 'spline',
+            marker: {
+              symbol: 'diamond',
+            },
             tooltip: {
               valueDecimals: 1
             }
         },{
-            name: 'Weight',
-            data: newArray,
+            name: 'Weights',
+            data: weights,
             type: 'spline',
             lineWidth: 0,
             marker: {
               enabled: true,
+              radius: 2,
               symbol: 'circle',
             },
             tooltip: {
