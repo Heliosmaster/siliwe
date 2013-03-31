@@ -19,9 +19,10 @@
         %a.btn.btn-inverse{:href=>"/"} Home
         .login
           - if logged_in?
-            Logged in as 
-            %b="#{current_user.name}"
-            %a.btn.btn-primary{:href=>"/logout"} logout
+            Logged in as
+            %a{:href => "/profile", :style=>"font-weight:bold;"}="#{current_user.name}"
+
+            %a.btn.btn-primary{:href=>"/logout", :style=>"margin-left:10px;"} logout
           - else
             %a.btn.btn-primary{:href=>"/auth/google_oauth2"} Login / Signup
       = yield

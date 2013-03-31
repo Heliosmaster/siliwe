@@ -1,0 +1,7 @@
+%form#edit{:action => "/profile", :method => "post"}
+  %input{:name => "_method", :type => "hidden", :value => "put"}
+    .block
+      %input{:type=>"checkbox", :name=>"lbs", :value=>1, :checked=>current_user.lbs}
+      %label{:for => "lbs"} Lbs?
+    .block
+    %input.btn.btn-primary{:type => "submit", :value => "Update profile"}

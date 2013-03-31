@@ -2,7 +2,11 @@ class Siliwe < Sinatra::Base
   get '/' do
     if logged_in?
       @weights = Weight.all(:user_id => current_user.id, :order => [:date.asc])
-      @default_value = @weights.empty? ? 0.0 : @weights.last.value
+      if current_user.lbs
+        @default_value = @weights.empty? ? 0.0 : @weights.last.value_lbs
+      else
+        @default_value = @weights.empty? ? 0.0 : @weights.last.value
+      end
       @title = "Your weights"
     else
       @weights = []
@@ -26,7 +30,7 @@ class Siliwe < Sinatra::Base
     end
   end
 
-  ['/weights/*', '/graph', '/parse_csv'].each do |path|
+  ['/weights/*', '/graph', '/parse_csv', '/user'].each do |path|
     before path do
       check_permission
     end
@@ -53,7 +57,7 @@ class Siliwe < Sinatra::Base
   end
 
   put '/weights/:id' do
-    Weight.update_values(params)
+    @weight.update_values(params)
     redirect '/'
   end
 
@@ -71,9 +75,14 @@ class Siliwe < Sinatra::Base
     @weights = Weight.all(:user_id => current_user.id, :order => [:date.asc])
     total_days = (@weights.last.date - @weights.first.date)
     @array = Array.new(@weights.length) {Array.new(3)}
+
     for i in 0..@weights.length-1
       weight = @weights[i]
-      @array[i] = [weight.date.strftime("%Q").to_i, weight.value, weight.trend]
+      if current_user.lbs
+        @array[i] = [weight.date.strftime("%Q").to_i, weight.value_lbs, weight.trend_lbs]
+      else
+        @array[i] = [weight.date.strftime("%Q").to_i, weight.value, weight.trend]
+      end
     end
     haml :show_chart
   end
@@ -92,6 +101,15 @@ class Siliwe < Sinatra::Base
   not_found do
     @title ="Page not found!"
     haml :not_found
+  end
+
+  get '/profile' do
+    haml :profile
+  end
+
+  put '/profile' do
+    current_user.update(:lbs => !!params[:lbs])
+    redirect '/profile'
   end
 
   get '/logout' do

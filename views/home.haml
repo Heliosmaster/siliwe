@@ -5,7 +5,10 @@
   %form.form-horizontal{:action => "/", :method => "post"}
     .input-append
       %input.spinner{:name => "value", :placeholder => "Weight (e.g. 50)", :style=>"width:150px;"}
-      .add-on Kg
+      -if current_user.lbs
+        .add-on Lbs
+      -else
+        .add-on Kg
     %input.datepicker{:name => "date", :placeholder => "Date", :readonly => true, :type => "text", :style=>"background-color:#fff;"} 
 
     %input.btn.btn-primary{:type => "submit", :value => "Post new weight"}

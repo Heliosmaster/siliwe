@@ -29,10 +29,9 @@ class Weight
     end
   end
 
-  def self.update_values(params)
-    weight = get(params[:id])
-    date = params[:date].empty? ? weight.date : Date.parse(params[:date])
-    weight.update(:value => params[:value], :date => date)
+  def update_values(params)
+    date = params[:date].empty? ? self.date : Date.parse(params[:date])
+    self.update(:value => params[:value], :date => date)
   end
 
   def self.create_from_csv(row,user)
@@ -45,14 +44,14 @@ class Weight
  end
 
  def self.create_from_params(params,user)
-  date = params[:date].empty? ? Date.today : Date.parse(params[:date])
-  weight = new
-  weight.value = params[:value]
-  weight.date = date
-  weight.user = user
-  weight.trend = weight.compute_trend
-  weight.save
-end
+    date = params[:date].empty? ? Date.today : Date.parse(params[:date])
+    weight = new
+    weight.value = params[:value]
+    weight.date = date
+    weight.user = user
+    weight.trend = weight.compute_trend
+    weight.save
+  end
 
 end
 
@@ -62,6 +61,7 @@ class User
   property :id, Serial
   property :email, String, :length => (5..40), :unique => true, :format => :email_address
   property :created_at, Time
+  property :lbs, Boolean, :default => false
 
   has n, :weights
 
