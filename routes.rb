@@ -2,11 +2,7 @@ class Siliwe < Sinatra::Base
   get '/' do
     if logged_in?
       @weights = Weight.all(:user_id => current_user.id, :order => [:date.asc])
-      if current_user.lbs
-        @default_value = @weights.empty? ? 0.0 : @weights.last.value_lbs
-      else
-        @default_value = @weights.empty? ? 0.0 : @weights.last.value
-      end
+      @default_value = @weights.empty? ? 0.0 : @weights.last.value
       @title = "Your weights"
     else
       @weights = []
@@ -75,14 +71,9 @@ class Siliwe < Sinatra::Base
     @weights = Weight.all(:user_id => current_user.id, :order => [:date.asc])
     total_days = (@weights.last.date - @weights.first.date)
     @array = Array.new(@weights.length) {Array.new(3)}
-
     for i in 0..@weights.length-1
       weight = @weights[i]
-      if current_user.lbs
-        @array[i] = [weight.date.strftime("%Q").to_i, weight.value_lbs, weight.trend_lbs]
-      else
-        @array[i] = [weight.date.strftime("%Q").to_i, weight.value, weight.trend]
-      end
+      @array[i] = [weight.date.strftime("%Q").to_i, weight.value, weight.trend]
     end
     haml :show_chart
   end
