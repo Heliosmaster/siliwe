@@ -1,4 +1,4 @@
-## Siliwe
+## Siliwe [![Build Status](https://travis-ci.org/Heliosmaster/siliwe.png)](https://travis-ci.org/Heliosmaster/siliwe)
 **Si**mple **Li**bra **We**bsite
 
 This small and **very simple** Sinatra web application is aimed at providing a basic functionality somewhat complementary to the Android app [Libra](https://play.google.com/store/apps/details?id=net.cachapa.libra) developed by [Daniel Cachapa](http://cachapa.net/).
